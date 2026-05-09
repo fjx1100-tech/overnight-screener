@@ -1,0 +1,1 @@
+https://diagnostic-button-f5c.notion.site/General-Writing-Guideline-94cd5661bdc64f10ade1208dd4079109
