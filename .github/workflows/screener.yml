@@ -1,0 +1,23 @@
+name: 隔夜持股法 — 尾盘选股
+
+on:
+  schedule:
+    # 北京时间 14:30 = UTC 06:30 (周一至周五)
+    - cron: '30 6 * * 1-5'
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run screener
+        env:
+          SC_KEY: ${{ secrets.SC_KEY }}
+        run: python screener.py
