@@ -280,9 +280,9 @@ def screen_initial(stocks, debug=False):
     for s in stocks:
         code = s.get("code","")
         name = s.get("name","")
-        # 排除300/688开头 (用户不能买创业板/科创板)
-        if code.startswith(("300","688")):
-            if debug: print(f"  ✗ {code} {name}: 300/688不可买")
+        # 排除300/301/688开头 (用户不能买创业板/科创板)
+        if code.startswith(("300","301","688")):
+            if debug: print(f"  ✗ {code} {name}: 300/301/688不可买")
             continue
         chg=s.get("change_pct"); mcap=s.get("mcap_billion")
         turn=s.get("turnover"); vr=s.get("vol_ratio")
