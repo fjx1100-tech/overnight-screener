@@ -20,7 +20,7 @@ SC_KEY = os.environ.get("SC_KEY", "SCT347879TSQ0zp53ApDKc8P8jN3D6Zggx")
 SC_URL = f"https://sctapi.ftqq.com/{SC_KEY}.send"
 
 # 筛选阈值
-MIN_MCAP, MAX_MCAP = 100, 230    # 亿
+MIN_MCAP, MAX_MCAP = 40, 230     # 亿 (40~230亿)
 MIN_CHG, MAX_CHG = 3.0, 5.0      # %
 MIN_TURN, MAX_TURN = 3.0, 9.0    # %
 MIN_VR = 1.2
@@ -243,28 +243,31 @@ def try_kline(code):
     return None
 
 def _calc_ma_fib(closes, highs, lows, vols):
-    """从OHLCV数组计算均线+斐波那契"""
+    """从OHLCV数组计算均线+上升通道判断"""
     if len(closes) < 20: return None
     ma10 = sum(closes[-10:]) / 10
     ma20 = sum(closes[-20:]) / 20
     ma30 = sum(closes) / len(closes)
     h = max(highs[-20:]); l = min(lows[-20:])
-    diff = h - l
-    fib382 = h - diff * 0.382; fib50 = h - diff * 0.50
-    fib618 = h - diff * 0.618
     cp = closes[-1]
-    near_fib = (fib618 <= cp <= fib382) if diff > 0 else False
-    dist = None
-    if diff > 0 and near_fib:
-        dist = min(abs(cp - fib382), abs(cp - fib50), abs(cp - fib618)) / diff * 100
     ma_ok = (ma10 > ma20 > ma30) or (ma10 > ma20)
     vol_ok = False
     if len(vols) >= 6:
         vol_ok = sum(vols[-3:]) / 3 > sum(vols[-6:-1]) / 5
+    # 上升通道判断: 当前价在MA20之上 + 近期底部抬升
+    up_channel = False
+    if len(closes) >= 40:
+        # 前20日低点 vs 后20日低点 → 底部抬升
+        low_prior = min(lows[:20])
+        low_recent = min(lows[-20:])
+        # 近20日低点 > 前20日低点 (底部抬高)
+        # 且当前价 > MA20 (在均线上方运行)
+        up_channel = (low_recent > low_prior) and (cp > ma20) and (cp > ma10)
+    elif len(closes) >= 20:
+        up_channel = (cp > ma20) and (cp > ma10)
     return {"ma10": round(ma10, 2), "ma20": round(ma20, 2), "ma30": round(ma30, 2),
-            "ma_bullish": ma_ok, "recent_high": round(h, 2), "recent_low": round(l, 2),
-            "fib_382": round(fib382, 2), "fib_50": round(fib50, 2), "fib_618": round(fib618, 2),
-            "near_fib": near_fib, "fib_distance_pct": round(dist, 1) if dist else None,
+            "ma_bullish": ma_ok, "up_channel": up_channel,
+            "recent_high": round(h, 2), "recent_low": round(l, 2),
             "vol_increasing": vol_ok, "current_price": cp}
 
 # ================================================================
@@ -275,6 +278,12 @@ def screen_initial(stocks, debug=False):
     """初筛"""
     ok=[]
     for s in stocks:
+        code = s.get("code","")
+        name = s.get("name","")
+        # 排除300/688开头 (用户不能买创业板/科创板)
+        if code.startswith(("300","688")):
+            if debug: print(f"  ✗ {code} {name}: 300/688不可买")
+            continue
         chg=s.get("change_pct"); mcap=s.get("mcap_billion")
         turn=s.get("turnover"); vr=s.get("vol_ratio")
         reason=[]
@@ -285,7 +294,7 @@ def screen_initial(stocks, debug=False):
         if mcap is not None and not (MIN_MCAP<=mcap<=MAX_MCAP): reason.append(f"市值{mcap:.0f}亿越界")
         if vr is not None and vr<MIN_VR: reason.append(f"量比{vr:.2f}<{MIN_VR}")
         if reason:
-            if debug: print(f"  ✗ {s['code']} {s['name']}: {', '.join(reason)}")
+            if debug: print(f"  ✗ {code} {s['name']}: {', '.join(reason)}")
             continue
         ok.append(s)
     return ok
@@ -299,11 +308,12 @@ def enrich_kline(stocks):
         time.sleep(0.12)
 
 def final_filter(stocks):
+    """终筛 — 均线多头 + 量增 + 上升通道"""
     for s in stocks:
         score=0
-        s["pass_ma"]=s.get("ma_bullish",False); score+=3 if s["pass_ma"] else 0
-        s["pass_vol"]=s.get("vol_increasing",False); score+=2 if s["pass_vol"] else 0
-        s["pass_fib"]=s.get("near_fib",False); score+=4 if s["pass_fib"] else 0
+        s["pass_ma"]=s.get("ma_bullish",False); score+=4 if s["pass_ma"] else 0
+        s["pass_vol"]=s.get("vol_increasing",False); score+=3 if s["pass_vol"] else 0
+        s["pass_uptrend"]=s.get("up_channel",False); score+=3 if s["pass_uptrend"] else 0
         # 数据完整度
         comp=0
         if s.get("src_A"): comp+=50
@@ -332,15 +342,11 @@ def print_top(stocks, n=15):
         tags=[]
         tags.append("MA✓" if s.get("pass_ma") else "MA✗")
         tags.append("量✓" if s.get("pass_vol") else "量✗")
-        tags.append("fib✓" if s.get("pass_fib") else "fib✗")
-        fib=""
-        if s.get("fib_382") and s.get("fib_50"):
-            fib=f" fib 0.382={s['fib_382']} 0.50={s['fib_50']}"
-            if s.get("fib_distance_pct"): fib+=f" (距:{s['fib_distance_pct']}%)"
+        tags.append("通道✓" if s.get("pass_uptrend") else "通道✗")
         ma=f" MA10={s['ma10']} MA20={s['ma20']}" if s.get("ma10") else ""
         print(f"\n{icon} #{i+1} {s['code']} {s['name']}  评分:{s['score']}  数据:{comp}%")
         print(f"  涨{s['change_pct']:.1f}% 量比{s.get('vol_ratio','?')} 换手{s['turnover']}% 市值{s.get('mcap_billion','?')}亿")
-        print(f"  现价{s.get('price','?')}{ma}{fib}")
+        print(f"  现价{s.get('price','?')}{ma}  {'|'.join(tags)}")
         if s.get("recent_high"): print(f"  区间: 高{s['recent_high']}→低{s['recent_low']}")
 
 def save(stocks):
@@ -352,10 +358,9 @@ def save(stocks):
         for i,s in enumerate(stocks[:15]):
             f.write(f"\n#{i+1} {s['code']} {s['name']} [数据:{s.get('completeness',0)}%]\n")
             f.write(f"  涨{s['change_pct']:.1f}% 量比{s.get('vol_ratio','?')} 换手{s['turnover']}% 市值{s.get('mcap_billion','?')}亿\n")
-            if s.get("ma10"): f.write(f"  MA10={s['ma10']} MA20={s['ma20']} 多头:{s.get('pass_ma')}\n")
-            if s.get("fib_50"): f.write(f"  fib 0.382={s['fib_382']} 0.50={s['fib_50']} 承接:{s.get('pass_fib')}\n")
+            if s.get("ma10"): f.write(f"  MA10={s['ma10']} MA20={s['ma20']} 多头:{s.get('pass_ma')} 通道:{s.get('pass_uptrend')}\n")
     print(f"\n📁 保存: {OUTPUT_DIR}/{ds}.json  + .txt")
-    return stocks  # 返回结果供推送用
+    return stocks
 
 def push_to_wechat(stocks):
     """Server酱推送到微信"""
@@ -372,10 +377,10 @@ def push_to_wechat(stocks):
             vr = s.get("vol_ratio", "?")
             turn = s.get("turnover", "?")
             mcap = s.get("mcap_billion", "?")
-            fib = f"fib {s.get('fib_382','?')}" if s.get("fib_382") else ""
+            ma = f"MA10={s.get('ma10','?')} MA20={s.get('ma20','?')}" if s.get("ma10") else ""
             lines.append(
                 f"{i+1}. {s['name']}({s['code']}) "
-                f"涨{chg}% 量比{vr} 换手{turn}% 市值{mcap}亿 {fib}"
+                f"涨{chg}% 量比{vr} 换手{turn}% 市值{mcap}亿 {ma}"
             )
         desp = "\n".join(lines)
         if len(stocks) > top_n:
