@@ -1,22 +1,37 @@
-name: 趋势波段选股 — 尾盘选股
+name: Trend Screener
+
 on:
   schedule:
-    - cron: '30 6 * * 1-5'  # 北京时间 14:30
+    # 14:30 Beijing time, Monday to Friday.
+    - cron: "30 6 * * 1-5"
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trend-screener-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   screen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install akshare
+        run: python -m pip install --upgrade pip akshare
 
       - name: Run trend scanner
         env:
@@ -25,13 +40,32 @@ jobs:
 
       - name: Save output to repo
         run: |
+          set -euo pipefail
           mkdir -p output
-          cp ~/trend_scanner_output/$(date +%Y-%m-%d).json output/latest.json
-          cp ~/trend_scanner_output/$(date +%Y-%m-%d).txt output/latest.txt
+          TODAY="$(date +%Y-%m-%d)"
+          if [ -f "$HOME/trend_scanner_output/${TODAY}.json" ]; then
+            cp "$HOME/trend_scanner_output/${TODAY}.json" output/latest.json
+            echo "Saved JSON output"
+          else
+            echo "WARNING: No JSON output found at $HOME/trend_scanner_output/${TODAY}.json"
+          fi
+          if [ -f "$HOME/trend_scanner_output/${TODAY}.txt" ]; then
+            cp "$HOME/trend_scanner_output/${TODAY}.txt" output/latest.txt
+            echo "Saved TXT output"
+          else
+            echo "WARNING: No TXT output found at $HOME/trend_scanner_output/${TODAY}.txt"
+          fi
 
       - name: Commit and push
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
-          git config user.email "actions@github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add output/
-          git diff --cached --quiet || (git commit -m "📊 $(date +%Y-%m-%d) 选股结果" && git push)
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update trend screener output $(date +%Y-%m-%d)"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
