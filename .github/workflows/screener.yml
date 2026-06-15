@@ -1,23 +1,70 @@
-name: 隔夜持股法 — 尾盘选股
+name: Overnight Screener
 
 on:
   schedule:
-    # 北京时间 14:30 = UTC 06:30 (周一至周五)
-    - cron: '30 6 * * 1-5'
-  workflow_dispatch:  # 手动触发
+    # 14:30 Beijing time, Monday to Friday.
+    - cron: "30 6 * * 1-5"
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: overnight-screener-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   screen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Run screener
         env:
           SC_KEY: ${{ secrets.SC_KEY }}
         run: python screener.py
+
+      - name: Save output to repo
+        run: |
+          set -euo pipefail
+          mkdir -p output/screener
+          TODAY="$(date +%Y-%m-%d)"
+          if [ -f "$HOME/overnight_screener_output/${TODAY}.json" ]; then
+            cp "$HOME/overnight_screener_output/${TODAY}.json" "output/screener/${TODAY}.json"
+            cp "$HOME/overnight_screener_output/${TODAY}.json" output/screener/latest.json
+            echo "Saved JSON output"
+          else
+            echo "WARNING: No JSON output found at $HOME/overnight_screener_output/${TODAY}.json"
+          fi
+          if [ -f "$HOME/overnight_screener_output/${TODAY}.txt" ]; then
+            cp "$HOME/overnight_screener_output/${TODAY}.txt" "output/screener/${TODAY}.txt"
+            cp "$HOME/overnight_screener_output/${TODAY}.txt" output/screener/latest.txt
+            echo "Saved TXT output"
+          else
+            echo "WARNING: No TXT output found at $HOME/overnight_screener_output/${TODAY}.txt"
+          fi
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output/screener/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update overnight screener output $(date +%Y-%m-%d)"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
