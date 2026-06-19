@@ -1,18 +1,5 @@
 [
   {
-    "code": "603052",
-    "name": "可川科技",
-    "price": "95.680",
-    "change_pct": 4.181,
-    "turnover": 4.9127,
-    "mcap": 179.78,
-    "vol_ratio": 1.77,
-    "score": 10,
-    "ma_bull": false,
-    "fib_pos": "<0.382",
-    "macd_golden": true
-  },
-  {
     "code": "003004",
     "name": "声迅股份",
     "price": "69.140",
@@ -24,6 +11,19 @@
     "ma_bull": true,
     "fib_pos": ">0.618",
     "macd_golden": true
+  },
+  {
+    "code": "603052",
+    "name": "可川科技",
+    "price": "95.680",
+    "change_pct": 4.181,
+    "turnover": 4.9127,
+    "mcap": 179.78,
+    "vol_ratio": 1.77,
+    "score": 9,
+    "ma_bull": false,
+    "fib_pos": "<0.382",
+    "macd_golden": false
   },
   {
     "code": "002029",
@@ -195,45 +195,6 @@
     "macd_golden": false
   },
   {
-    "code": "603579",
-    "name": "荣泰健康",
-    "price": "20.590",
-    "change_pct": 3.885,
-    "turnover": 3.89518,
-    "mcap": 41.4,
-    "vol_ratio": 2.5,
-    "score": 7,
-    "ma_bull": false,
-    "fib_pos": "0.5-0.618",
-    "macd_golden": false
-  },
-  {
-    "code": "002927",
-    "name": "泰永长征",
-    "price": "22.600",
-    "change_pct": 3.575,
-    "turnover": 10.37739,
-    "mcap": 50.44,
-    "vol_ratio": 1.39,
-    "score": 7,
-    "ma_bull": false,
-    "fib_pos": ">0.618",
-    "macd_golden": true
-  },
-  {
-    "code": "002881",
-    "name": "美格智能",
-    "price": "43.680",
-    "change_pct": 5,
-    "turnover": 6.71469,
-    "mcap": 131.94,
-    "vol_ratio": 1.26,
-    "score": 6,
-    "ma_bull": false,
-    "fib_pos": "0.382-0.5",
-    "macd_golden": true
-  },
-  {
     "code": "002145",
     "name": "钛能化学",
     "price": "4.680",
@@ -257,19 +218,6 @@
     "score": 6,
     "ma_bull": false,
     "fib_pos": ">0.618",
-    "macd_golden": false
-  },
-  {
-    "code": "603166",
-    "name": "福达股份",
-    "price": "16.490",
-    "change_pct": 4.301,
-    "turnover": 7.95695,
-    "mcap": 106.47,
-    "vol_ratio": 2.46,
-    "score": 6,
-    "ma_bull": false,
-    "fib_pos": ">0.618",
     "macd_golden": true
   },
   {
@@ -284,6 +232,19 @@
     "ma_bull": false,
     "fib_pos": ">0.618",
     "macd_golden": true
+  },
+  {
+    "code": "603579",
+    "name": "荣泰健康",
+    "price": "20.590",
+    "change_pct": 3.885,
+    "turnover": 3.89518,
+    "mcap": 41.4,
+    "vol_ratio": 2.5,
+    "score": 6,
+    "ma_bull": false,
+    "fib_pos": "0.5-0.618",
+    "macd_golden": false
   },
   {
     "code": "002150",
@@ -312,6 +273,19 @@
     "macd_golden": false
   },
   {
+    "code": "002927",
+    "name": "泰永长征",
+    "price": "22.600",
+    "change_pct": 3.575,
+    "turnover": 10.37739,
+    "mcap": 50.44,
+    "vol_ratio": 1.39,
+    "score": 6,
+    "ma_bull": false,
+    "fib_pos": ">0.618",
+    "macd_golden": false
+  },
+  {
     "code": "605287",
     "name": "德才股份",
     "price": "43.680",
@@ -335,6 +309,32 @@
     "score": 6,
     "ma_bull": false,
     "fib_pos": "<0.382",
+    "macd_golden": false
+  },
+  {
+    "code": "002881",
+    "name": "美格智能",
+    "price": "43.680",
+    "change_pct": 5,
+    "turnover": 6.71469,
+    "mcap": 131.94,
+    "vol_ratio": 1.26,
+    "score": 5,
+    "ma_bull": false,
+    "fib_pos": "0.382-0.5",
+    "macd_golden": false
+  },
+  {
+    "code": "603166",
+    "name": "福达股份",
+    "price": "16.490",
+    "change_pct": 4.301,
+    "turnover": 7.95695,
+    "mcap": 106.47,
+    "vol_ratio": 2.46,
+    "score": 5,
+    "ma_bull": false,
+    "fib_pos": ">0.618",
     "macd_golden": false
   }
 ]
