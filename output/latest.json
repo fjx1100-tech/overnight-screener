@@ -1,1 +1,41 @@
-[]
+[
+  {
+    "code": "000948",
+    "name": "南天信息",
+    "price": 14.27,
+    "change_pct": 5.0,
+    "turnover": 7.68,
+    "mcap": 55.63712805,
+    "vol_ratio": 5.45,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": ">0.618",
+    "macd_golden": false
+  },
+  {
+    "code": "002612",
+    "name": "朗姿股份",
+    "price": 15.39,
+    "change_pct": 4.06,
+    "turnover": 4.91,
+    "mcap": 68.09234321,
+    "vol_ratio": 1.76,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "<0.382",
+    "macd_golden": false
+  },
+  {
+    "code": "002823",
+    "name": "凯中精密",
+    "price": 12.46,
+    "change_pct": 3.49,
+    "turnover": 4.82,
+    "mcap": 40.80628444,
+    "vol_ratio": 3.37,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "0.382-0.5",
+    "macd_golden": false
+  }
+]
