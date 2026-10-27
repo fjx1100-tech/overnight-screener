@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "code": "600617",
+    "name": "国新能源",
+    "price": 3.26,
+    "change_pct": 4.82,
+    "turnover": 6.81,
+    "mcap": 62.8916519,
+    "vol_ratio": 3.19,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "<0.382",
+    "macd_golden": true
+  }
+]
