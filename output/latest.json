@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "code": "603219",
+    "name": "富佳股份",
+    "price": 12.92,
+    "change_pct": 4.87,
+    "turnover": 3.34,
+    "mcap": 72.53288,
+    "vol_ratio": 4.28,
+    "score": 4,
+    "ma_bull": false,
+    "fib_pos": ">0.618",
+    "macd_golden": false
+  }
+]
