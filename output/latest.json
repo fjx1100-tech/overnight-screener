@@ -1,15 +1,28 @@
 [
   {
-    "code": "603219",
-    "name": "富佳股份",
-    "price": 12.92,
-    "change_pct": 4.87,
-    "turnover": 3.34,
-    "mcap": 72.53288,
-    "vol_ratio": 4.28,
-    "score": 4,
+    "code": "603998",
+    "name": "方盛制药",
+    "price": 10.16,
+    "change_pct": 4.85,
+    "turnover": 3.18,
+    "mcap": 44.61066618,
+    "vol_ratio": 2.08,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "0.5-0.618",
+    "macd_golden": false
+  },
+  {
+    "code": "002853",
+    "name": "皮阿诺",
+    "price": 22.84,
+    "change_pct": 4.92,
+    "turnover": 5.61,
+    "mcap": 41.77800252,
+    "vol_ratio": 4.32,
+    "score": 6,
     "ma_bull": false,
     "fib_pos": ">0.618",
-    "macd_golden": false
+    "macd_golden": true
   }
 ]
