@@ -1,1 +1,80 @@
-[]
+[
+  {
+    "code": "002983",
+    "name": "芯瑞达",
+    "price": "25.830",
+    "change_pct": 3.735,
+    "turnover": 11.22077,
+    "mcap": 57.46,
+    "vol_ratio": 1.29,
+    "score": 9,
+    "ma_bull": true,
+    "fib_pos": ">0.618",
+    "macd_golden": true
+  },
+  {
+    "code": "601515",
+    "name": "衢州东峰",
+    "price": "2.690",
+    "change_pct": 4.264,
+    "turnover": 3.24186,
+    "mcap": 51.77,
+    "vol_ratio": 3.41,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "<0.382",
+    "macd_golden": true
+  },
+  {
+    "code": "600576",
+    "name": "祥源文旅",
+    "price": "4.980",
+    "change_pct": 4.184,
+    "turnover": 6.06628,
+    "mcap": 52.52,
+    "vol_ratio": 2.49,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "<0.382",
+    "macd_golden": true
+  },
+  {
+    "code": "003033",
+    "name": "征和工业",
+    "price": "63.930",
+    "change_pct": 3.53,
+    "turnover": 6.24725,
+    "mcap": 52.26,
+    "vol_ratio": 1.94,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "<0.382",
+    "macd_golden": true
+  },
+  {
+    "code": "600828",
+    "name": "茂业商业",
+    "price": "3.550",
+    "change_pct": 3.499,
+    "turnover": 3.33532,
+    "mcap": 61.49,
+    "vol_ratio": 1.78,
+    "score": 8,
+    "ma_bull": false,
+    "fib_pos": "<0.382",
+    "macd_golden": false
+  },
+  {
+    "code": "605018",
+    "name": "长华集团",
+    "price": "13.030",
+    "change_pct": 4.911,
+    "turnover": 11.18015,
+    "mcap": 61.25,
+    "vol_ratio": 6.07,
+    "score": 6,
+    "ma_bull": false,
+    "fib_pos": ">0.618",
+    "macd_golden": true
+  }
+]
